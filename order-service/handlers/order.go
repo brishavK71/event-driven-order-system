@@ -71,6 +71,7 @@ func HandleDelete(w http.ResponseWriter, r *http.Request) {
 	if err := db.DB.Delete(&models.Order{}, order.ID).Error; err != nil {
 		http.Error(w, "Failed to delete order from DB", http.StatusInternalServerError)
 	} else {
+		log.Printf("Order deleted successful")
 		w.WriteHeader(http.StatusAccepted)
 		json.NewEncoder(w).Encode(map[string]string{"message": fmt.Sprintf("Order %s deleted from database", order.ID)})
 	}
