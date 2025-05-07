@@ -25,6 +25,6 @@ func main() {
 	kafka.InitKafkaWriter(broker, "orders")
 	http.HandleFunc("/order", handlers.HandleOrder)
 	http.HandleFunc("/delete", handlers.HandleDelete)
-	log.Println("Order Service running on port 8080...")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Println("Order Service running on port 8000...")
+	log.Fatal(http.ListenAndServe(":8000", nil))
 }

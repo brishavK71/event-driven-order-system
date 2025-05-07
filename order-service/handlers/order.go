@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"event-driven-order-system/order-service/db"
+	"event-driven-order-system/order-service/kafka"
 	"event-driven-order-system/order-service/models"
 	"fmt"
 	"io"
@@ -35,6 +36,7 @@ func HandleOrder(w http.ResponseWriter, r *http.Request) {
 		if err := db.DB.Create(&orders).Error; err != nil {
 			http.Error(w, "Failed to save orders", http.StatusInternalServerError)
 		}
+		kafka.PublishOrder(orders)
 	} else {
 		var order models.Order
 		err = json.Unmarshal(bodyBytes, &order)
@@ -49,6 +51,8 @@ func HandleOrder(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusCreated)
 			json.NewEncoder(w).Encode(map[string]string{"message": "Order Saved to the database"})
 		}
+
+		kafka.PublishOrder(order)
 	}
 
 	log.Printf("Received order: %+v\n", orders)
